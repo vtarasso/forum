@@ -23,4 +23,4 @@ Go to: http://localhost:4000
 Run the following command: "go run main.go" or "go run ." and click on the generated URL address to go to the web page
 
 ### Authors
-@smustafi @dkazgozh @vtarasso
+ @vtarasso @smustafi @dkazgozh
