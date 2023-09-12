@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Liked posts</title>
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="icon" type="image/png" sizes="120x120"  href="/static/img/logo.png">
+    </head>
+    <body>
+        <div class="flex wrapper">
+            <header class="header">
+                <div class="flex container header__container">
+                    <div class="header__wrapper">
+                        <a class="header__link" href="/">
+                            <h1 class="header__title">
+                                Forum
+                            </h1>
+                        </a>
+                    </div>
+                    <div class="header__wrapper">
+                        <div class="header__wrapper">
+                            {{if .IsAuthenticated}}
+                            <div class="dropdown">
+                              <nav class="dropdown">
+                                <p class="dropbtn">{{.UserData.Name}}</p>
+                                <ul class="dropdown-content">
+                                    <li class="header__item dropdown__item">
+                                        <a href="/snippet/create">Create post</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/myposts">My posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <form action="/user/logout" method="POST">
+                                            <button class="btn header__btn">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                              </nav>
+                              {{else}}
+                            <nav class="header__nav">
+                              <ul class="flex header__list">
+                                  <li class="header__item">
+                                      <a class="header__link" href="/">Home</a>
+                                  </li>
+                                  <li class="header__item">
+                                      <a class="header__link" href="/user/login">Login</a>
+                                  </li>
+                              </ul>
+                              
+                            </nav>
+                            {{end}}
+                            </div>
+                        <nav class="header__nav header__nav--none">
+                            <ul class="flex header__list">
+                                <li class="header__item">
+                                    <a class="header__link" href="/">Home</a>
+                                </li>
+                                {{if .IsAuthenticated}}
+                                <li class="header__item">
+                                    <a href="/snippet/create">Create post</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/myposts">My posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <form action="/user/logout" method="POST">
+                                        <button class="btn header__btn">Logout</button>
+                                    </form>
+                                </li>
+                                {{else}}
+                                <li class="header__item">
+                                    <a class="header__link" href="/user/login">Login</a>
+                                </li>
+                                {{end}}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <main class="main">
+                <div class="container main__container">
+                    <section class="flex main-section">
+                        <div class="main-section__content">
+                            <h2 class="main-section__title">
+                                Welcome to the FORUM
+                            </h2>
+                            <p class="main-section__descr">
+                                We're glad you enjoyed these great forum threads. Keep going!
+                            </p>
+                        </div>
+                        <div class="main-section__bg">
+                        </div>
+                    </section>
+                    <section class="post-section">
+                        {{ define "inc" }}{{ len (printf "%*s " . "") }}{{ end -}}
+                        {{if .Snippets}}
+                        {{range .Snippets}}
+                        <div class="post-section__content">
+                            <h3 class="post-secton__title">
+                                {{.Title}}
+                            </h3>
+                            <div class="post-section__inner">
+                                <strong>Date: </strong>{{humanDate .Created}} | <strong>Author:</strong> {{.UserName}}
+                                <div class="post-secton__cat">
+                                    <strong>Categories: </strong>
+                                    {{range .Catigories}} 
+                                    <span>{{.}} | </span>
+                                    {{end}}
+                                </div>
+                                <div class="post-section__button">
+                                    <a href="/snippet/{{.ID}}">Read more</a>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                        {{else}}
+                            <p class="post-section__nothing">Your liked posts will be here</p>
+                        {{end}}
+                    </section>
+                </div>
+            </main>
+            <footer class="footer">
+                <div class="container footer__container">
+                   <p class="footer__descr">
+                        This project created on <a class="footer__link"  href="https://golang.org/">Golang</a> in {{.CurrentYear}}
+                   </p>
+                </div> 
+            </footer>
+        </div>
+    </body>
+</html>

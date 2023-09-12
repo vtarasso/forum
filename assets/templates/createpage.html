@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Creating the post</title>
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="/static/css/btn.css">
+        <link rel="icon" type="image/png" sizes="120x120"  href="/static/img/logo.png">
+    </head>
+    <body>
+        <div class="flex wrapper">
+            <header class="header header--create">
+                <div class="flex container header__container">
+                    <div class="header__wrapper">
+                        <a class="header__link" href="/">
+                            <h1 class="header__title">
+                                Forum
+                            </h1>
+                        </a>
+                    </div>
+                    <div class="header__wrapper">
+                        <div class="header__wrapper">
+                            {{if .IsAuthenticated}}
+                            <div class="dropdown">
+                              <nav class="dropdown">
+                                <p class="dropbtn">{{.Snippet.UserName}}</p>
+                                <ul class="dropdown-content">
+                                    <li class="header__item dropdown__item">
+                                        <a href="/snippet/create">Create post</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/myposts">My posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <form action="/user/logout" method="POST">
+                                            <button class="btn header__btn">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                              </nav>
+                            </div>
+                            {{else}}
+                            <nav class="dropdown header__nav">
+                              <ul class="flex header__list">
+                                  <li class="header__item">
+                                      <a class="header__link" href="/">Home</a>
+                                  </li>
+                                  <li class="header__item">
+                                      <a class="header__link" href="/user/login">Login</a>
+                                  </li>
+                              </ul>
+                              
+                            </nav>
+                            {{end}}
+                        <nav class="header__nav header__nav--none">
+                            <ul class="flex header__list">
+                                <li class="header__item">
+                                    <a class="header__link" href="/">Home</a>
+                                </li>
+                                {{if .IsAuthenticated}}
+                                <li class="header__item">
+                                    <a href="/snippet/create">Create post</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/myposts">My posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <form action="/user/logout" method="POST">
+                                        <button class="btn header__btn">Logout</button>
+                                    </form>
+                                </li>
+                                {{else}}
+                                <li class="header__item">
+                                    <a class="header__link" href="/user/login">Login</a>
+                                </li>
+                                {{end}}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <main class="main create">
+                <div class="container main__container create__container">
+                    {{ define "inc" }}{{ len (printf "%*s " . "") }}{{ end -}}
+                    <div class="post-section__content create__wrapper">
+                        <form action="/snippet/create" method="POST">
+                            <div class="create__inner">
+                                <h3 class="create__title">
+                                    Title:
+                                </h3>
+                                {{with .Snippet.Validator.FieldErrors.title}}
+                                <label class="error">{{.}}</label>
+                                {{end}}
+                                <input class="create__input create__input--title" type="text" name="title" value="{{.Snippet.Title}}">
+                            </div>
+                            <div class="create__inner create__cat">
+                                <h3 class="create__title">
+                                    Categories:
+                                </h3>
+                                <div>
+                                    {{range $index, $value := .Catigories}}
+                                    <input type="checkbox" class="create__input--cat  checkbox" name="cat" id='{{template "inc" $index}}' value='{{template "inc" $index}}'> 
+                                    <label class="categ__label" for='{{template "inc" $index}}'>{{$value}}</label>
+                                    {{end}}
+                                </div>
+                            </div>
+                            {{with .Snippet.Validator.FieldErrors.cat}}
+                            <label class="error">{{.}}</label>
+                            {{end}}
+                            
+                            <div class="create__inner">
+                                <h3 class="create__title">
+                                    Content:
+                                </h3>
+                                {{with .Snippet.Validator.FieldErrors.content}}
+                                <label class="error">{{.}}</label>
+                                {{end}}
+                                <textarea class="create__input create__content" name="content">{{.Snippet.Content}}</textarea>
+                            </div>              
+                            <div>
+                                <button class="main-section__btn custom-btn main__btn create__btn" type="submit">
+                                    <span>Create post</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+            <footer class="footer">
+                <div class="container footer__container">
+                   <p class="footer__descr">
+                        This project created on <a class="footer__link"  href="https://golang.org/">Golang</a> in {{.CurrentYear}}
+                   </p>
+                </div> 
+            </footer>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang='en'>
+    <head>
+        <meta charset="utf-8">
+        {{with .Snippet}}  
+        <title>{{.Title}}</title>
+        {{end}}
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="/static/css/btn.css">
+        <link rel="icon" type="image/png" sizes="120x120"  href="/static/img/logo.png">
+    </head>
+    <body>
+        <div class="flex wrapper">
+            <header class="header header--create">
+                <div class="flex container header__container">
+                    <div class="header__wrapper">
+                        <a class="header__link" href="/">
+                            <h1 class="header__title">
+                                Forum
+                            </h1>
+                        </a>
+                    </div>
+                    <div class="header__wrapper">
+                        <div class="header__wrapper">
+                            {{if .IsAuthenticated}}
+                            <div class="dropdown">
+                              <nav class="dropdown">
+                                <p class="dropbtn">{{.UserData.Name}}</p>
+                                <ul class="dropdown-content">
+                                    <li class="header__item dropdown__item">
+                                        <a href="/snippet/create">Create post</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/myposts">My posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                    </li>
+                                    <li class="header__item dropdown__item">
+                                        <form action="/user/logout" method="POST">
+                                            <button class="btn header__btn">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                              </nav>
+                            </div>
+                            {{else}}
+                            <nav class="dropdown header__nav">
+                            <ul class="flex header__list">
+                                <li class="header__item">
+                                    <a class="header__link" href="/">Home</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/user/login">Login</a>
+                                </li>
+                            </ul>
+                            
+                            </nav>
+                            {{end}}
+                        <nav class="header__nav header__nav--none">
+                            <ul class="flex header__list">
+                                <li class="header__item">
+                                    <a class="header__link" href="/">Home</a>
+                                </li>
+                                {{if .IsAuthenticated}}
+                                <li class="header__item">
+                                    <a href="/snippet/create">Create post</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/myposts">My posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <a class="header__link" href="/snippet/liked">Liked posts</a>
+                                </li>
+                                <li class="header__item">
+                                    <form action="/user/logout" method="POST">
+                                        <button class="btn header__btn">Logout</button>
+                                    </form>
+                                </li>
+                                {{else}}
+                                <li class="header__item">
+                                    <a class="header__link" href="/user/login">Login</a>
+                                </li>
+                                {{end}}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <main class="main">
+                <div class="container main__container">
+                    <div class="post-section__content showpage">
+                        {{with .Snippet}} 
+                        <h3 class="post-secton__title">
+                            {{.Title}}
+                        </h3>
+                        <div class="post-section__inner">
+                            <div class="showpage__inf">
+                                <strong>Date: </strong>{{humanDate .Created}} | <strong>Author:</strong> {{.UserName}}
+                                <div class="post-secton__cat">
+                                    <strong>Categories: </strong>
+                                    {{range .Catigories}} 
+                                    <span>{{.}} | </span>
+                                    {{end}}
+                                </div>
+                            </div>
+                            <div class="showpage__content">
+                                <pre class="showpage__txt">{{.Content}}</pre>
+                            </div>
+                        </div>
+                        <div class="flex showpage__inner">
+                            {{.Likes}}
+                            <a class="showpage__reaction" href="/likePost?id={{.ID}}" method="POST">
+                                <img src="../static/img/like.png" alt="button like">
+                            </a>
+                            {{.Dislikes}}
+                            <a class="showpage__reaction" href="/dislikePost?id={{.ID}}" method="POST">
+                                <img src="../static/img/dislike.png" alt="button dislike">
+                            </a>
+                        </div>
+                        {{end}}
+                    </div>
+                    <div class="showpage__comm comment">
+                        <div class="comment__title">
+                            <h3>Comments:</h3>
+                        </div>
+                        {{range .SnippetsCom}}
+                        <div  class="comment__content">
+                            <div class="comment__ava">
+                            </div>
+                            <div class="comment__info">
+                                <div class="comment__info--date">
+                                    <strong>Date: </strong>{{humanDate .Created}} | <strong>Author:</strong> {{.UserName}}
+                                </div>
+                                <pre class="showpage__txt">{{.Content}}</pre>
+                            </div>
+                            <div class="flex showpage__inner showpage__inner--reaccom">
+                                {{.LikesCom}}
+                                <a class="showpage__reaction" href="/likeComment?id={{.ID}}" method="POST">
+                                    <img src="../static/img/like.png" alt="button like">
+                                </a>
+                                {{.DislikesCom}}
+                                <a class="showpage__reaction" href="/dislikeComment?id={{.ID}}" method="POST">
+                                    <img src="../static/img/dislike.png" alt="button dislike">
+                                </a>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                    {{if .IsAuthenticated}}
+                    <div  class="comment__content comment__content--border">
+                        <div class="comment__ava">
+                        </div>
+                        <div class="comment__info">
+                            <form action='/snippet/{{.Snippet.ID}}' id="comment" method='POST'>
+                                {{with .FormCom.Validator.FieldErrors.content}}
+                                <label class='error'>{{.}}</label>
+                                {{end}}
+                                <textarea class="create__input create__content" name="content">{{.FormCom.Content}}</textarea>
+                            </form>
+                            <button class="main-section__btn custom-btn main__btn create__btn" form="comment" type="submit" placeholder="Leave a comment...">
+                                <span>Send</span>
+                            </button>
+                        </div>
+                    </div>
+                    {{else}}
+                    <p class="post-section__nothing">Login to leave a comment!</p>
+                    {{end}}
+                </div>
+            </main>
+            <footer class="footer">
+                <div class="container footer__container">
+                   <p class="footer__descr">
+                        This project created on <a class="footer__link"  href="https://golang.org/">Golang</a> in {{.CurrentYear}}
+                   </p>
+                </div> 
+            </footer>
+        </div>
+    </body>
+</html>
